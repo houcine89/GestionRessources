@@ -1,5 +1,5 @@
 <div class="card">
   <div class="card-block">
-    <input [value]="newCard.text" (input)="newCard.text = $event.target.value">
+    <input placeholder="Take a note..." class="form-control" [(ngModel)]="newCard.text">
   </div>
 </div>
