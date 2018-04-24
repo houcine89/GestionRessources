@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
+import { NgForm, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-new-card-input',
@@ -9,21 +10,28 @@ import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/
 export class NewCardInputComponent implements OnInit {
   public newCard: any = {text: ''};
   @Output() onCardAdd = new EventEmitter<string>();
+  @ViewChild('form') public form: NgForm;
+  newCardForm: FormGroup;
 
-  constructor() { }
+  constructor(fb: FormBuilder) { 
+    this.newCardForm = fb.group({
+      'text': ['', Validators.compose([Validators.required, Validators.minLength(2)])]
+    });
+  }
 
   ngOnInit() {
   }
+  
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if ((event.code === "Enter" || event.code === "NumpadEnter") && this.newCard.text.length > 0) {
-      this.addCard(this.newCard.text);
+    if ((event.code === "Enter" || event.code === "NumpadEnter") && this.newCardForm.valid) {
+      this.addCard(this.newCardForm.controls['text'].value);
     }
   }
 
   addCard(text) {
     this.onCardAdd.emit(text);
-    this.newCard.text = '';
+    this.newCardForm.controls['text'].setValue('');
   }
 }
